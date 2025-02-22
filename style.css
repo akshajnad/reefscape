@@ -4,7 +4,7 @@
    SF Sports Night header, and larger buttons for mobile.
 ------------------------------------------------------- */
 
-/* Optional: SF Sports Night font (provide SFSportsNight.woff2 in same folder)
+/* Optional: SF Sports Night font (ensure SFSportsNight.woff2 is available)
 @font-face {
   font-family: 'SF Sports Night';
   src: url('SFSportsNight.woff2') format('woff2');
@@ -26,7 +26,7 @@ html, body {
   font-family: sans-serif;
 }
 
-/* Main header */
+/* Main Header */
 .main-header {
   background-color: #000;
   text-align: center;
@@ -41,7 +41,7 @@ html, body {
   text-transform: uppercase;
 }
 
-/* App container */
+/* App Container */
 .app {
   display: flex;
   flex-direction: column;
@@ -50,7 +50,7 @@ html, body {
   padding: 10px;
 }
 
-/* Section (column) styling */
+/* Section (Column) Styles */
 .column {
   background-color: #111;
   border: 1px solid #333;
@@ -74,7 +74,7 @@ html, body {
   gap: 8px;
 }
 
-/* Field styling */
+/* Field Styles */
 .field {
   background-color: #000;
   border: 1px solid #d91f26;
@@ -102,7 +102,7 @@ html, body {
   width: 100%;
 }
 
-/* Toggle fields (checkboxes) */
+/* Toggle Fields (Checkboxes) */
 .toggle-field {
   flex-direction: row;
   align-items: center;
@@ -116,7 +116,7 @@ html, body {
   accent-color: #d91f26;
 }
 
-/* Timer field */
+/* Timer Field */
 .timer-field {
   align-items: flex-start;
 }
@@ -149,7 +149,7 @@ html, body {
   color: #fff;
 }
 
-/* Counter fields */
+/* Counter Fields */
 .counter-field {
   align-items: flex-start;
 }
@@ -182,7 +182,7 @@ html, body {
   font-size: 0.85rem;
 }
 
-/* Field map (Auto Start Position) */
+/* Field Map (Auto Start Position) */
 .field-image {
   gap: 8px;
 }
@@ -211,7 +211,7 @@ html, body {
   transform: scaleX(-1);
 }
 
-/* Bottom buttons */
+/* Bottom Buttons */
 .bottom-buttons {
   display: flex;
   gap: 10px;
@@ -245,7 +245,7 @@ html, body {
   background-color: #d91f26;
 }
 
-/* Modal styling */
+/* Modal */
 .modal {
   display: none;
   position: fixed;
