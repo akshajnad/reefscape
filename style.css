@@ -1,9 +1,10 @@
 /* ------------------------------------------------------
    style.css
    Replicates the original Reefscape look with smooth outlines.
+   Uses SF Sports Night (if available) for the header.
 ------------------------------------------------------- */
 
-/* OPTIONAL: Include SF Sports Night font if available */
+/* Optional font face for SF Sports Night – provide the .woff2 file if available */
 /*
 @font-face {
   font-family: 'SF Sports Night';
@@ -26,7 +27,7 @@ html, body {
   font-family: sans-serif;
 }
 
-/* Main header */
+/* Main Header */
 .main-header {
   background-color: #000;
   text-align: center;
@@ -50,7 +51,7 @@ html, body {
   padding: 10px;
 }
 
-/* Column styles */
+/* Each Section (Column) */
 .column {
   background-color: #111;
   border: 1px solid #333;
@@ -74,7 +75,7 @@ html, body {
   gap: 8px;
 }
 
-/* Field styles */
+/* Fields */
 .field {
   background-color: #000;
   border: 1px solid #d91f26;
@@ -102,7 +103,7 @@ html, body {
   width: 100%;
 }
 
-/* Toggle fields (for checkboxes) */
+/* Toggle fields (checkboxes) */
 .toggle-field {
   flex-direction: row;
   align-items: center;
@@ -139,7 +140,7 @@ html, body {
   background-color: #111;
   border: 1px solid #d91f26;
   color: #d91f26;
-  padding: 8px 12px;  /* slightly bigger */
+  padding: 8px 12px;
   border-radius: 3px;
   font-size: 0.9rem;
   cursor: pointer;
@@ -162,7 +163,7 @@ html, body {
   background-color: #111;
   border: 1px solid #d91f26;
   color: #d91f26;
-  width: 36px;   /* increased size */
+  width: 36px;
   height: 36px;
   font-size: 1.2rem;
   border-radius: 4px;
@@ -182,7 +183,7 @@ html, body {
   font-size: 0.85rem;
 }
 
-/* Field map for auto start position */
+/* Field map (Auto Start Position) */
 .field-image {
   gap: 8px;
 }
@@ -222,7 +223,7 @@ html, body {
   background-color: #111;
   border: 1px solid #d91f26;
   color: #d91f26;
-  padding: 10px 18px; /* larger padding */
+  padding: 10px 18px;
   font-size: 1rem;
   text-transform: uppercase;
   border-radius: 5px;
@@ -245,7 +246,7 @@ html, body {
   background-color: #d91f26;
 }
 
-/* Modal styling */
+/* Modal */
 .modal {
   display: none;
   position: fixed;
@@ -289,7 +290,7 @@ html, body {
   word-wrap: break-word;
 }
 
-/* Responsive tweaks */
+/* Responsive */
 @media (max-width: 768px) {
   .field-map {
     max-width: 100%;
