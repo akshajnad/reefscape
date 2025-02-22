@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Reefscape - FRC Scouting App</title>
-  <!-- Ensure full width on mobile -->
+  <!-- Ensure full width and proper scaling on mobile -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- Link to external CSS -->
   <link rel="stylesheet" href="style.css" />
@@ -14,6 +14,9 @@
 <header class="main-header">
   <h1>REEFSCAPE</h1>
 </header>
+
+<!-- Hidden event code for TBA API calls -->
+<input type="hidden" id="eventCode" value="2020caln" />
 
 <div class="app">
   <!-- PREMATCH SECTION -->
@@ -43,7 +46,7 @@
           <option value="Blue 3">Blue 3</option>
         </select>
       </div>
-      <!-- Team Number (Auto-filled) -->
+      <!-- Team Number (Auto-filled from TBA data) -->
       <div class="field">
         <label for="teamNumber">Team Number</label>
         <input type="number" id="teamNumber" value="0" />
@@ -69,7 +72,7 @@
           <button type="button" id="flipFieldBtn">Flip</button>
         </div>
         <div class="field-map" id="fieldMap">
-          <!-- Replace 'field.png' with your actual field image -->
+          <!-- Replace "field.png" with your actual field image -->
           <img src="field.png" alt="Game Field" />
           <div class="red-dot" id="redDot"></div>
         </div>
@@ -125,7 +128,7 @@
           <button class="counter-btn" onclick="increment('coralL3Auto')">+</button>
         </div>
       </div>
-      <!-- Coral L4 Scored (New) -->
+      <!-- Coral L4 Scored -->
       <div class="field counter-field">
         <label>Coral L4 Scored</label>
         <div class="counter-container">
@@ -215,7 +218,7 @@
           <button class="counter-btn" onclick="increment('coralL3Tele')">+</button>
         </div>
       </div>
-      <!-- Coral L4 Scored (New) -->
+      <!-- Coral L4 Scored -->
       <div class="field counter-field">
         <label>Coral L4 Scored</label>
         <div class="counter-container">
@@ -358,7 +361,7 @@
 
 <!-- Load the official minified QR code library -->
 <script src="qrcode.min.js"></script>
-<!-- Load your main script -->
+<!-- Load the integrated script -->
 <script src="script.js"></script>
 
 </body>
