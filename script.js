@@ -1,19 +1,18 @@
 /* ------------------------------------------------------
    script.js
    Integrated functionality:
-   - Uses a constant for event code (set here)
+   - Uses a constant for event code (set in our TBA interface)
    - Pulls team and match data from TBA using the provided API key
-   - Free–form interactive field: on click, store actual (x,y) coordinates (not grid–constrained)
-   - Auto–fill team number based on robot selection (using real TBA data)
-   - Reset form automatically increments match number
-   - Builds output data as short–code key=value; string (including Coral L4 fields)
+   - Free–form interactive field: on click, stores actual (x,y) coordinate
+   - Commit button builds output as short–code key=value; string,
+     converting the free–form auto–start–position into a grid cell number.
 ------------------------------------------------------ */
 
 /* ===== TBA Interface Functions ===== */
 var teams = null;
 var schedule = null;
 var authKey = "2XACou7MLBnRarV4LPD69OOTMzSccjEfedI2diYMvzuxbD6d2E9U9PEiPppOPjsE";
-const EVENT_CODE = "CTWAT";
+const EVENT_CODE = "2020caln";  // Change this to your desired event code
 
 function getTeams(eventCode) {
   if (authKey) {
@@ -118,10 +117,10 @@ function updateDefenseSkillDisplay() {
 function onFieldClick(event) {
   const map = document.getElementById('fieldMap');
   const rect = map.getBoundingClientRect();
-  // Use event.offsetX/Y to get click position relative to the image
+  // Use event.offsetX/Y to get the click position relative to the image
   const x = event.offsetX;
   const y = event.offsetY;
-  // Store as a JSON array of one element "x,y"
+  // Store the coordinate as a JSON array (we store one element "x,y")
   const coordsArray = [x + "," + y];
   document.getElementById('startingPosition').value = JSON.stringify(coordsArray);
   // Position the red dot at the clicked coordinates
@@ -190,6 +189,8 @@ function autoFillTeamNumber() {
 }
 
 /* ===== Build Short-Code Data String ===== */
+/* For the auto start position (startingPosition), we now parse the free selection (x,y)
+   and convert it into a grid cell number using a default 12x6 resolution. */
 function getFormDataString() {
   const fieldsMap = [
     { code: 'si', id: 'scouterInitials' },
@@ -242,6 +243,24 @@ function getFormDataString() {
     let val = '';
     if (!el) {
       val = '';
+    } else if (fm.id === "startingPosition") {
+      // Convert free selection coordinate (stored as JSON array of "x,y")
+      // into a grid cell number using default 12x6 resolution.
+      try {
+        let coordsArr = JSON.parse(el.value); // e.g., ["123,45"]
+        if (coordsArr.length > 0) {
+          let parts = coordsArr[0].split(",");
+          let x = parseFloat(parts[0]);
+          let y = parseFloat(parts[1]);
+          // Get the width and height of the field image
+          let img = document.querySelector("#fieldMap img");
+          let rect = img.getBoundingClientRect();
+          let cell = Math.ceil(x / (rect.width / 12)) + ((Math.ceil(y / (rect.height / 6)) - 1) * 12);
+          val = cell;
+        }
+      } catch (e) {
+        val = "";
+      }
     } else if (el.type === 'checkbox') {
       val = el.checked ? 'true' : 'false';
     } else {
@@ -275,13 +294,11 @@ function closeQRModal() {
 
 /* ===== Reset Form (Auto-Increment Match Number) ===== */
 function resetForm() {
-  // Increment match number automatically
   const matchInput = document.getElementById("matchNumber");
   let currentMatch = parseInt(matchInput.value, 10);
   if (!isNaN(currentMatch)) {
     matchInput.value = currentMatch + 1;
   }
-  // Reset all other fields (except event code)
   document.querySelectorAll('input, select, textarea').forEach(el => {
     if (el.id === "matchNumber") return;
     if (el.id === "eventCode") return;
@@ -315,7 +332,7 @@ function copyColumnNames() {
 
 /* ===== Window Onload: Initialize Everything ===== */
 window.onload = () => {
-  // Pull teams and schedule from TBA using our EVENT_CODE
+  // Pull teams and schedule from TBA using EVENT_CODE
   getTeams(EVENT_CODE);
   getSchedule(EVENT_CODE);
   
@@ -324,12 +341,16 @@ window.onload = () => {
   document.getElementById('lapTimerBtn').addEventListener('click', lapTimer);
   document.getElementById('resetTimerBtn').addEventListener('click', resetTimer);
   
-  // Field map: use free selection (our onFieldClick now stores actual (x,y))
+  // Field map: free selection
   document.getElementById('fieldMap').addEventListener('click', onFieldClick);
   document.getElementById('flipFieldBtn').addEventListener('click', () => {
     document.getElementById('fieldMap').classList.toggle('flipped');
   });
-  document.getElementById('undoPositionBtn').addEventListener('click', undoPosition);
+  document.getElementById('undoPositionBtn').addEventListener('click', () => {
+    document.getElementById('redDot').style.display = 'none';
+    document.getElementById('startingPosition').value = '';
+    checkMandatory();
+  });
   
   // When robot selection changes, auto-fill team number
   document.getElementById('robotNumber').addEventListener('change', () => {
