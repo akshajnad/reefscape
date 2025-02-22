@@ -12,7 +12,7 @@
 var teams = null;
 var schedule = null;
 var authKey = "2XACou7MLBnRarV4LPD69OOTMzSccjEfedI2diYMvzuxbD6d2E9U9PEiPppOPjsE";
-const EVENT_CODE = "2020caln";  // Change this to your desired event code
+const EVENT_CODE = "CTWAT";  // Change this to your desired event code
 
 function getTeams(eventCode) {
   if (authKey) {
