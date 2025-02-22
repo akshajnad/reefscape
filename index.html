@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Reefscape - FRC Scouting App</title>
+  <!-- Ensure full width on mobile -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- Link to external CSS -->
   <link rel="stylesheet" href="style.css" />
@@ -15,7 +16,7 @@
 </header>
 
 <div class="app">
-  <!-- ================== PREMATCH COLUMN ================== -->
+  <!-- PREMATCH SECTION -->
   <div class="column" id="prematchColumn">
     <div class="column-header">PREMATCH</div>
     <div class="column-body">
@@ -27,7 +28,7 @@
       <!-- Match Number -->
       <div class="field">
         <label for="matchNumber">Match Number</label>
-        <input type="number" id="matchNumber" value="0" />
+        <input type="number" id="matchNumber" value="1" />
       </div>
       <!-- Robot (Dropdown, Mandatory) -->
       <div class="field">
@@ -42,7 +43,7 @@
           <option value="Blue 3">Blue 3</option>
         </select>
       </div>
-      <!-- Team Number -->
+      <!-- Team Number (Auto-filled) -->
       <div class="field">
         <label for="teamNumber">Team Number</label>
         <input type="number" id="teamNumber" value="0" />
@@ -60,7 +61,7 @@
           <option value="Deep">Deep</option>
         </select>
       </div>
-      <!-- Auto Start Position (Image Grid, Mandatory) -->
+      <!-- Auto Start Position (Interactive, Mandatory) -->
       <div class="field field-image">
         <label>Auto Start Position *</label>
         <div class="map-buttons">
@@ -68,7 +69,7 @@
           <button type="button" id="flipFieldBtn">Flip</button>
         </div>
         <div class="field-map" id="fieldMap">
-          <!-- Replace "field.png" with your actual field image -->
+          <!-- Replace 'field.png' with your actual field image -->
           <img src="field.png" alt="Game Field" />
           <div class="red-dot" id="redDot"></div>
         </div>
@@ -77,7 +78,7 @@
     </div>
   </div>
 
-  <!-- ================== AUTONOMOUS COLUMN ================== -->
+  <!-- AUTONOMOUS SECTION -->
   <div class="column" id="autonomousColumn">
     <div class="column-header">AUTONOMOUS</div>
     <div class="column-body">
@@ -168,7 +169,7 @@
     </div>
   </div>
 
-  <!-- ================== TELEOP COLUMN ================== -->
+  <!-- TELEOP SECTION -->
   <div class="column" id="teleopColumn">
     <div class="column-header">TELEOP</div>
     <div class="column-body">
@@ -177,7 +178,7 @@
         <label for="dislodgedAlgaeTele">Dislodged Algae?</label>
         <input type="checkbox" id="dislodgedAlgaeTele" />
       </div>
-      <!-- Pickup Location (Dropdown) -->
+      <!-- Pickup Location -->
       <div class="field">
         <label for="pickupLocation">Pickup Location</label>
         <select id="pickupLocation">
@@ -250,7 +251,7 @@
           <button class="counter-btn" onclick="increment('teleFouls')">+</button>
         </div>
       </div>
-      <!-- Crossed Field/Played Defense? -->
+      <!-- Crossed Field/Defense? -->
       <div class="field toggle-field">
         <label for="crossedField">Crossed Field/Defense?</label>
         <input type="checkbox" id="crossedField" />
@@ -277,11 +278,11 @@
     </div>
   </div>
 
-  <!-- ================== ENDGAME COLUMN ================== -->
+  <!-- ENDGAME SECTION -->
   <div class="column" id="endgameColumn">
     <div class="column-header">ENDGAME</div>
     <div class="column-body">
-      <!-- End Position (Dropdown) -->
+      <!-- End Position -->
       <div class="field">
         <label for="endPosition">End Position</label>
         <select id="endPosition">
@@ -305,7 +306,7 @@
     </div>
   </div>
 
-  <!-- ================== POSTMATCH COLUMN ================== -->
+  <!-- POSTMATCH SECTION -->
   <div class="column" id="postmatchColumn">
     <div class="column-header">POSTMATCH</div>
     <div class="column-body">
@@ -339,14 +340,14 @@
   </div>
 </div>
 
-<!-- ================== BOTTOM BUTTONS ================== -->
+<!-- BOTTOM BUTTONS -->
 <div class="bottom-buttons">
   <button class="btn commit-btn" id="commitButton">Commit</button>
   <button class="btn" id="resetButton">Reset Form</button>
   <button class="btn" id="copyColumnNamesButton">Copy Column Names</button>
 </div>
 
-<!-- ================== MODAL FOR QR CODE ================== -->
+<!-- MODAL FOR QR CODE -->
 <div id="qrModal" class="modal">
   <div class="modal-content">
     <span id="closeModal" class="close">&times;</span>
@@ -355,9 +356,9 @@
   </div>
 </div>
 
-<!-- 1) Load the official minified QR code library -->
+<!-- Load the official minified QR code library -->
 <script src="qrcode.min.js"></script>
-<!-- 2) Then load your main script -->
+<!-- Load your main script -->
 <script src="script.js"></script>
 
 </body>
