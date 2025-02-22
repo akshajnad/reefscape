@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Reefscape - FRC Scouting App</title>
-  <!-- Ensure full width and proper scaling on mobile -->
+  <!-- Ensure full-width and proper scaling on mobile -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- Link to external CSS -->
   <link rel="stylesheet" href="style.css" />
@@ -15,8 +15,7 @@
   <h1>REEFSCAPE</h1>
 </header>
 
-<!-- Hidden event code for TBA API calls -->
-<input type="hidden" id="eventCode" value="2020caln" />
+<!-- (No hidden event code input here – event code is now a JS constant) -->
 
 <div class="app">
   <!-- PREMATCH SECTION -->
@@ -46,7 +45,7 @@
           <option value="Blue 3">Blue 3</option>
         </select>
       </div>
-      <!-- Team Number (Auto-filled from TBA data) -->
+      <!-- Team Number (Auto-filled from TBA) -->
       <div class="field">
         <label for="teamNumber">Team Number</label>
         <input type="number" id="teamNumber" value="0" />
@@ -72,10 +71,11 @@
           <button type="button" id="flipFieldBtn">Flip</button>
         </div>
         <div class="field-map" id="fieldMap">
-          <!-- Replace "field.png" with your actual field image -->
+          <!-- Use your field.png image -->
           <img src="field.png" alt="Game Field" />
           <div class="red-dot" id="redDot"></div>
         </div>
+        <!-- This hidden input will store the free-form coordinate as a JSON array (e.g., '["123,45"]') -->
         <input type="hidden" id="startingPosition" value="" />
       </div>
     </div>
