@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>FRC Scouting App (Mobile Fullscreen)</title>
-  <!-- Ensures phone uses full width -->
+  <title>Reefscape - FRC Scouting App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Link to external CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<!-- ====== MAIN HEADER ====== -->
+<!-- MAIN HEADER -->
 <header class="main-header">
-  <h1>Reefscape</h1>
+  <h1>REEFSCAPE</h1>
 </header>
 
 <div class="app">
@@ -48,7 +48,7 @@
         <input type="number" id="teamNumber" value="0" />
       </div>
       <!-- No Show? -->
-      <div class="checkbox-field">
+      <div class="field toggle-field">
         <label for="noShow">No Show?</label>
         <input type="checkbox" id="noShow" />
       </div>
@@ -60,8 +60,7 @@
           <option value="Deep">Deep</option>
         </select>
       </div>
-
-      <!-- === Auto Start Position (Image Grid, Mandatory) === -->
+      <!-- Auto Start Position (Image Grid, Mandatory) -->
       <div class="field field-image">
         <label>Auto Start Position *</label>
         <div class="map-buttons">
@@ -73,7 +72,6 @@
           <img src="field.png" alt="Game Field" />
           <div class="red-dot" id="redDot"></div>
         </div>
-        <!-- Hidden input to store the cell number for CSV -->
         <input type="hidden" id="startingPosition" value="" />
       </div>
     </div>
@@ -84,12 +82,12 @@
     <div class="column-header">AUTONOMOUS</div>
     <div class="column-body">
       <!-- Moved? -->
-      <div class="checkbox-field">
+      <div class="field toggle-field">
         <label for="movedAuto">Moved?</label>
         <input type="checkbox" id="movedAuto" />
       </div>
       <!-- Time to Score Coral (Timer) -->
-      <div class="timer-field">
+      <div class="field timer-field">
         <label>Time to Score Coral</label>
         <div class="timer-display" id="timeToScoreCoralDisplay">00:00.0</div>
         <div class="timer-buttons">
@@ -97,64 +95,72 @@
           <button class="timer-btn" id="lapTimerBtn">Lap</button>
           <button class="timer-btn" id="resetTimerBtn">Reset</button>
         </div>
-        <!-- Hidden input to store final time for CSV -->
         <input type="hidden" id="timeToScoreCoral" value="0.00" />
       </div>
       <!-- Coral L1 Scored -->
-      <div class="field">
+      <div class="field counter-field">
         <label>Coral L1 Scored</label>
         <div class="counter-container">
-          <button class="counter-btn" onclick="decrement('coralL1Auto')">-</button>
+          <button class="counter-btn" onclick="decrement('coralL1Auto')">–</button>
           <input type="number" id="coralL1Auto" value="0" />
           <button class="counter-btn" onclick="increment('coralL1Auto')">+</button>
         </div>
       </div>
       <!-- Coral L2 Scored -->
-      <div class="field">
+      <div class="field counter-field">
         <label>Coral L2 Scored</label>
         <div class="counter-container">
-          <button class="counter-btn" onclick="decrement('coralL2Auto')">-</button>
+          <button class="counter-btn" onclick="decrement('coralL2Auto')">–</button>
           <input type="number" id="coralL2Auto" value="0" />
           <button class="counter-btn" onclick="increment('coralL2Auto')">+</button>
         </div>
       </div>
       <!-- Coral L3 Scored -->
-      <div class="field">
+      <div class="field counter-field">
         <label>Coral L3 Scored</label>
         <div class="counter-container">
-          <button class="counter-btn" onclick="decrement('coralL3Auto')">-</button>
+          <button class="counter-btn" onclick="decrement('coralL3Auto')">–</button>
           <input type="number" id="coralL3Auto" value="0" />
           <button class="counter-btn" onclick="increment('coralL3Auto')">+</button>
         </div>
       </div>
+      <!-- Coral L4 Scored (New) -->
+      <div class="field counter-field">
+        <label>Coral L4 Scored</label>
+        <div class="counter-container">
+          <button class="counter-btn" onclick="decrement('coralL4Auto')">–</button>
+          <input type="number" id="coralL4Auto" value="0" />
+          <button class="counter-btn" onclick="increment('coralL4Auto')">+</button>
+        </div>
+      </div>
       <!-- Barge Algae Scored -->
-      <div class="field">
+      <div class="field counter-field">
         <label>Barge Algae Scored</label>
         <div class="counter-container">
-          <button class="counter-btn" onclick="decrement('bargeAlgaeAuto')">-</button>
+          <button class="counter-btn" onclick="decrement('bargeAlgaeAuto')">–</button>
           <input type="number" id="bargeAlgaeAuto" value="0" />
           <button class="counter-btn" onclick="increment('bargeAlgaeAuto')">+</button>
         </div>
       </div>
       <!-- Processor Algae Scored -->
-      <div class="field">
+      <div class="field counter-field">
         <label>Processor Algae Scored</label>
         <div class="counter-container">
-          <button class="counter-btn" onclick="decrement('processorAlgaeAuto')">-</button>
+          <button class="counter-btn" onclick="decrement('processorAlgaeAuto')">–</button>
           <input type="number" id="processorAlgaeAuto" value="0" />
           <button class="counter-btn" onclick="increment('processorAlgaeAuto')">+</button>
         </div>
       </div>
       <!-- Dislodged Algae? -->
-      <div class="checkbox-field">
+      <div class="field toggle-field">
         <label for="dislodgedAlgaeAuto">Dislodged Algae?</label>
         <input type="checkbox" id="dislodgedAlgaeAuto" />
       </div>
       <!-- Auto Foul -->
-      <div class="field">
+      <div class="field counter-field">
         <label>Auto Foul</label>
         <div class="counter-container">
-          <button class="counter-btn" onclick="decrement('autoFoul')">-</button>
+          <button class="counter-btn" onclick="decrement('autoFoul')">–</button>
           <input type="number" id="autoFoul" value="0" />
           <button class="counter-btn" onclick="increment('autoFoul')">+</button>
         </div>
@@ -167,7 +173,7 @@
     <div class="column-header">TELEOP</div>
     <div class="column-body">
       <!-- Dislodged Algae? -->
-      <div class="checkbox-field">
+      <div class="field toggle-field">
         <label for="dislodgedAlgaeTele">Dislodged Algae?</label>
         <input type="checkbox" id="dislodgedAlgaeTele" />
       </div>
@@ -182,76 +188,89 @@
         </select>
       </div>
       <!-- Coral L1 Scored -->
-      <div class="field">
+      <div class="field counter-field">
         <label>Coral L1 Scored</label>
         <div class="counter-container">
-          <button class="counter-btn" onclick="decrement('coralL1Tele')">-</button>
+          <button class="counter-btn" onclick="decrement('coralL1Tele')">–</button>
           <input type="number" id="coralL1Tele" value="0" />
           <button class="counter-btn" onclick="increment('coralL1Tele')">+</button>
         </div>
       </div>
       <!-- Coral L2 Scored -->
-      <div class="field">
+      <div class="field counter-field">
         <label>Coral L2 Scored</label>
         <div class="counter-container">
-          <button class="counter-btn" onclick="decrement('coralL2Tele')">-</button>
+          <button class="counter-btn" onclick="decrement('coralL2Tele')">–</button>
           <input type="number" id="coralL2Tele" value="0" />
           <button class="counter-btn" onclick="increment('coralL2Tele')">+</button>
         </div>
       </div>
       <!-- Coral L3 Scored -->
-      <div class="field">
+      <div class="field counter-field">
         <label>Coral L3 Scored</label>
         <div class="counter-container">
-          <button class="counter-btn" onclick="decrement('coralL3Tele')">-</button>
+          <button class="counter-btn" onclick="decrement('coralL3Tele')">–</button>
           <input type="number" id="coralL3Tele" value="0" />
           <button class="counter-btn" onclick="increment('coralL3Tele')">+</button>
         </div>
       </div>
+      <!-- Coral L4 Scored (New) -->
+      <div class="field counter-field">
+        <label>Coral L4 Scored</label>
+        <div class="counter-container">
+          <button class="counter-btn" onclick="decrement('coralL4Tele')">–</button>
+          <input type="number" id="coralL4Tele" value="0" />
+          <button class="counter-btn" onclick="increment('coralL4Tele')">+</button>
+        </div>
+      </div>
       <!-- Barge Algae Scored -->
-      <div class="field">
+      <div class="field counter-field">
         <label>Barge Algae Scored</label>
         <div class="counter-container">
-          <button class="counter-btn" onclick="decrement('bargeAlgaeTele')">-</button>
+          <button class="counter-btn" onclick="decrement('bargeAlgaeTele')">–</button>
           <input type="number" id="bargeAlgaeTele" value="0" />
           <button class="counter-btn" onclick="increment('bargeAlgaeTele')">+</button>
         </div>
       </div>
       <!-- Processor Algae Scored -->
-      <div class="field">
+      <div class="field counter-field">
         <label>Processor Algae Scored</label>
         <div class="counter-container">
-          <button class="counter-btn" onclick="decrement('processorAlgaeTele')">-</button>
+          <button class="counter-btn" onclick="decrement('processorAlgaeTele')">–</button>
           <input type="number" id="processorAlgaeTele" value="0" />
           <button class="counter-btn" onclick="increment('processorAlgaeTele')">+</button>
         </div>
       </div>
       <!-- Tele Fouls -->
-      <div class="field">
+      <div class="field counter-field">
         <label>Tele Fouls</label>
         <div class="counter-container">
-          <button class="counter-btn" onclick="decrement('teleFouls')">-</button>
+          <button class="counter-btn" onclick="decrement('teleFouls')">–</button>
           <input type="number" id="teleFouls" value="0" />
           <button class="counter-btn" onclick="increment('teleFouls')">+</button>
         </div>
       </div>
-      <!-- Crossed Field? -->
-      <div class="checkbox-field">
-        <label for="crossedField">Crossed Field?</label>
+      <!-- Crossed Field/Played Defense? -->
+      <div class="field toggle-field">
+        <label for="crossedField">Crossed Field/Defense?</label>
         <input type="checkbox" id="crossedField" />
       </div>
       <!-- Tipped/Fell Over? -->
-      <div class="checkbox-field">
+      <div class="field toggle-field">
         <label for="tippedFell">Tipped/Fell Over?</label>
         <input type="checkbox" id="tippedFell" />
       </div>
       <!-- Touched Opposing Cage? -->
-      <div class="checkbox-field">
+      <div class="field counter-field">
         <label for="touchedOpposingCage">Touched Opposing Cage?</label>
-        <input type="checkbox" id="touchedOpposingCage" />
+        <div class="counter-container">
+          <button class="counter-btn" onclick="decrement('touchedOpposingCage')">–</button>
+          <input type="number" id="touchedOpposingCage" value="0" />
+          <button class="counter-btn" onclick="increment('touchedOpposingCage')">+</button>
+        </div>
       </div>
       <!-- DEP? -->
-      <div class="checkbox-field">
+      <div class="field toggle-field">
         <label for="depTele">DEP?</label>
         <input type="checkbox" id="depTele" />
       </div>
@@ -274,14 +293,14 @@
         </select>
       </div>
       <!-- Defended? -->
-      <div class="checkbox-field">
+      <div class="field toggle-field">
         <label for="defended">Defended?</label>
         <input type="checkbox" id="defended" />
       </div>
       <!-- Time Remaining After Hang -->
       <div class="field">
         <label for="timeRemainingHang">Time Remaining After Hang</label>
-        <input type="number" id="timeRemainingHang" value="0" />
+        <textarea id="timeRemainingHang" rows="1" placeholder="e.g. 10s left"></textarea>
       </div>
     </div>
   </div>
@@ -302,16 +321,12 @@
         <input type="range" id="defenseSkill" min="1" max="5" value="3" oninput="updateDefenseSkillDisplay()" />
         <span id="defenseSkillValue">3</span>
       </div>
-      <!-- Yellow Card -->
-      <div class="checkbox-field">
-        <label for="yellowCard">Yellow Card</label>
-        <input type="checkbox" id="yellowCard" />
-      </div>
-      <!-- Card (No Card / Red Card) -->
+      <!-- Card (Yellow/Red) -->
       <div class="field">
         <label for="cardStatus">Card</label>
         <select id="cardStatus">
           <option value="No Card">No Card</option>
+          <option value="Yellow Card">Yellow Card</option>
           <option value="Red Card">Red Card</option>
         </select>
       </div>
@@ -340,9 +355,8 @@
   </div>
 </div>
 
-<!-- 1) Load the official minified QR code library (qrcode.min.js) -->
+<!-- 1) Load the official minified QR code library -->
 <script src="qrcode.min.js"></script>
-
 <!-- 2) Then load your main script -->
 <script src="script.js"></script>
 
