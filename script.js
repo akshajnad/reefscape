@@ -1,18 +1,19 @@
 /* ------------------------------------------------------
    script.js
    Integrated functionality:
-   - Uses a constant for event code (set in our TBA interface)
+   - EVENT_CODE is defined here (change as needed)
    - Pulls team and match data from TBA using the provided API key
-   - Free–form interactive field: on click, stores actual (x,y) coordinate
-   - Commit button builds output as short–code key=value; string,
-     converting the free–form auto–start–position into a grid cell number.
+   - Free–form interactive field: stores (x,y) coordinates, then converts them to a grid cell number (12x6) for output
+   - Auto–fill of team number based on match number, match type, and robot
+   - Reset form auto–increments match number
+   - Builds output data as short–code key=value; string (including Coral L4 fields)
 ------------------------------------------------------ */
 
 /* ===== TBA Interface Functions ===== */
 var teams = null;
 var schedule = null;
 var authKey = "2XACou7MLBnRarV4LPD69OOTMzSccjEfedI2diYMvzuxbD6d2E9U9PEiPppOPjsE";
-const EVENT_CODE = "2024cthar";  // Change this to your desired event code
+const EVENT_CODE = "2024cthar";  // Set your event code here
 
 function getTeams(eventCode) {
   if (authKey) {
@@ -120,7 +121,7 @@ function onFieldClick(event) {
   // Use event.offsetX/Y to get the click position relative to the image
   const x = event.offsetX;
   const y = event.offsetY;
-  // Store the coordinate as a JSON array (we store one element "x,y")
+  // Store the coordinate as a JSON array (e.g., ["123,45"])
   const coordsArray = [x + "," + y];
   document.getElementById('startingPosition').value = JSON.stringify(coordsArray);
   // Position the red dot at the clicked coordinates
@@ -143,14 +144,15 @@ function checkMandatory() {
   document.getElementById('commitButton').disabled = !validateMandatoryFields();
 }
 
-/* ===== Auto-Fill Team Number Based on Robot & TBA Data ===== */
-function getRobot() {
-  let r = document.getElementById("robotNumber").value;
-  if (!r) return "";
-  return r.toLowerCase().replace("red ", "r").replace("blue ", "b");
-}
+/* ===== Auto-Fill Team Number Based on Match Data ===== */
+/* The match key is built using EVENT_CODE, match type, and match number.
+   For qualifiers, the key format is: EVENT_CODE + "_qm" + matchNumber
+   For playoffs, we'll assume: EVENT_CODE + "_qf" + matchNumber
+   For finals: EVENT_CODE + "_f" + matchNumber  */
 function getCurrentMatchKey() {
-  return EVENT_CODE + "_" + document.getElementById("matchNumber").value;
+  const matchType = document.getElementById("matchType").value;
+  const matchNumber = document.getElementById("matchNumber").value;
+  return EVENT_CODE + "_" + matchType + matchNumber;
 }
 function getMatch(matchKey) {
   if (schedule) {
@@ -167,6 +169,11 @@ function getMatch(matchKey) {
 function getCurrentMatch() {
   return getMatch(getCurrentMatchKey());
 }
+function getRobot() {
+  let r = document.getElementById("robotNumber").value;
+  if (!r) return "";
+  return r.toLowerCase().replace("red ", "r").replace("blue ", "b");
+}
 function getCurrentTeamNumberFromRobot() {
   const robot = getRobot();
   const match = getCurrentMatch();
@@ -182,6 +189,10 @@ function getCurrentTeamNumberFromRobot() {
   return "";
 }
 function autoFillTeamNumber() {
+  const matchType = document.getElementById("matchType").value;
+  const matchNumber = document.getElementById("matchNumber").value;
+  const robot = document.getElementById("robotNumber").value;
+  if (!matchType || !matchNumber || !robot) return;
   const team = getCurrentTeamNumberFromRobot();
   if (team) {
     document.getElementById("teamNumber").value = team.replace("frc", "");
@@ -189,12 +200,11 @@ function autoFillTeamNumber() {
 }
 
 /* ===== Build Short-Code Data String ===== */
-/* For the auto start position (startingPosition), we now parse the free selection (x,y)
-   and convert it into a grid cell number using a default 12x6 resolution. */
 function getFormDataString() {
   const fieldsMap = [
     { code: 'si', id: 'scouterInitials' },
     { code: 'mn', id: 'matchNumber' },
+    { code: 'mt', id: 'matchType' },
     { code: 'rb', id: 'robotNumber' },
     { code: 'tn', id: 'teamNumber' },
     { code: 'sp', id: 'startingPosition' },
@@ -245,14 +255,14 @@ function getFormDataString() {
       val = '';
     } else if (fm.id === "startingPosition") {
       // Convert free selection coordinate (stored as JSON array of "x,y")
-      // into a grid cell number using default 12x6 resolution.
+      // into a grid cell number using a default 12x6 resolution based on the image dimensions.
       try {
-        let coordsArr = JSON.parse(el.value); // e.g., ["123,45"]
+        let coordsArr = JSON.parse(el.value);
         if (coordsArr.length > 0) {
           let parts = coordsArr[0].split(",");
           let x = parseFloat(parts[0]);
           let y = parseFloat(parts[1]);
-          // Get the width and height of the field image
+          // Use the field image dimensions
           let img = document.querySelector("#fieldMap img");
           let rect = img.getBoundingClientRect();
           let cell = Math.ceil(x / (rect.width / 12)) + ((Math.ceil(y / (rect.height / 6)) - 1) * 12);
@@ -352,17 +362,23 @@ window.onload = () => {
     checkMandatory();
   });
   
-  // When robot selection changes, auto-fill team number
+  // When robot, match type, or match number change, auto-fill team number
   document.getElementById('robotNumber').addEventListener('change', () => {
     autoFillTeamNumber();
     checkMandatory();
+  });
+  document.getElementById('matchType').addEventListener('change', () => {
+    autoFillTeamNumber();
+  });
+  document.getElementById('matchNumber').addEventListener('input', () => {
+    autoFillTeamNumber();
   });
   
   // Watch mandatory fields
   document.querySelectorAll('#scouterInitials, #robotNumber, #startingPosition, #comments')
     .forEach(el => el.addEventListener('input', checkMandatory));
   
-  // Commit button: validate mandatory fields, build data string, and show QR
+  // Commit button: validate mandatory fields, build data string, and show QR code
   document.getElementById('commitButton').addEventListener('click', () => {
     if (!validateMandatoryFields()) {
       alert('Please fill out all required fields:\n- Scouter Initials\n- Robot\n- Auto Start Position\n- Comments');
