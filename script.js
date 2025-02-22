@@ -1,39 +1,28 @@
 /* ------------------------------------------------------
    script.js
-   - Counters, sliders, timer, CSV, QR modal
-   - Includes clickable field map for Starting Position
-   - Checks mandatory fields on "Commit"
-   - Now outputs short-code format: key=value;
+   - Contains logic for counters, toggles, timer, field map,
+     mandatory field validation, and QR code generation.
+   - Data is output as short codes (key=value;) including Coral L4 fields.
 ------------------------------------------------------- */
 
-/* ============= Timer Logic for Time to Score Coral ============= */
+/* ============= Timer Logic ============= */
 let timerInterval = null;
 let startTime = 0;
 let elapsedTime = 0;
 let isRunning = false;
-
 function formatTime(ms) {
   const totalSeconds = Math.floor(ms / 1000);
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
   const fraction = Math.floor((ms % 1000) / 100);
-  return (
-    String(minutes).padStart(2, '0') +
-    ':' +
-    String(seconds).padStart(2, '0') +
-    '.' +
-    fraction
-  );
+  return String(minutes).padStart(2, '0') + ':' +
+         String(seconds).padStart(2, '0') + '.' + fraction;
 }
-
 function updateTimerDisplay() {
-  const display = document.getElementById('timeToScoreCoralDisplay');
-  display.textContent = formatTime(elapsedTime);
+  document.getElementById('timeToScoreCoralDisplay').textContent = formatTime(elapsedTime);
 }
-
 function startStopTimer() {
   if (!isRunning) {
-    // Start
     isRunning = true;
     startTime = Date.now() - elapsedTime;
     document.getElementById('startStopTimerBtn').textContent = 'Stop';
@@ -42,7 +31,6 @@ function startStopTimer() {
       updateTimerDisplay();
     }, 100);
   } else {
-    // Stop
     isRunning = false;
     clearInterval(timerInterval);
     timerInterval = null;
@@ -50,12 +38,10 @@ function startStopTimer() {
     document.getElementById('timeToScoreCoral').value = (elapsedTime / 1000).toFixed(2);
   }
 }
-
 function lapTimer() {
   document.getElementById('timeToScoreCoral').value = (elapsedTime / 1000).toFixed(2);
   alert('Lap recorded: ' + document.getElementById('timeToScoreCoral').value + 's');
 }
-
 function resetTimer() {
   clearInterval(timerInterval);
   timerInterval = null;
@@ -66,87 +52,73 @@ function resetTimer() {
   document.getElementById('timeToScoreCoral').value = '0.00';
 }
 
-/* ============= Increment / Decrement ============= */
+/* ============= Increment/Decrement ============= */
 function increment(id) {
-  const input = document.getElementById(id);
-  let val = parseInt(input.value, 10);
+  const el = document.getElementById(id);
+  let val = parseInt(el.value, 10);
   if (isNaN(val)) val = 0;
-  input.value = val + 1;
+  el.value = val + 1;
 }
 function decrement(id) {
-  const input = document.getElementById(id);
-  let val = parseInt(input.value, 10);
+  const el = document.getElementById(id);
+  let val = parseInt(el.value, 10);
   if (isNaN(val)) val = 0;
-  if (val > 0) {
-    input.value = val - 1;
-  }
+  if (val > 0) el.value = val - 1;
 }
 
 /* ============= Sliders ============= */
 function updateOffenseSkillDisplay() {
-  const val = document.getElementById('offenseSkill').value;
-  document.getElementById('offenseSkillValue').textContent = val;
+  document.getElementById('offenseSkillValue').textContent = document.getElementById('offenseSkill').value;
 }
 function updateDefenseSkillDisplay() {
-  const val = document.getElementById('defenseSkill').value;
-  document.getElementById('defenseSkillValue').textContent = val;
+  document.getElementById('defenseSkillValue').textContent = document.getElementById('defenseSkill').value;
 }
 
-/* ============= Field Map (Starting Position) ============= */
+/* ============= Field Map Logic ============= */
 const gridCols = 12;
 const gridRows = 6;
-
 function handleFieldClick(e) {
-  const fieldMap = document.getElementById('fieldMap');
-  const rect = fieldMap.getBoundingClientRect();
+  const map = document.getElementById('fieldMap');
+  const rect = map.getBoundingClientRect();
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
-  const cellWidth = rect.width / gridCols;
-  const cellHeight = rect.height / gridRows;
-  const col = Math.floor(x / cellWidth);
-  const row = Math.floor(y / cellHeight);
-  const cellNumber = row * gridCols + col + 1;
-
-  // Place the red dot
+  const cellW = rect.width / gridCols;
+  const cellH = rect.height / gridRows;
+  const col = Math.floor(x / cellW);
+  const row = Math.floor(y / cellH);
+  const cellNum = row * gridCols + col + 1;
+  document.getElementById('startingPosition').value = cellNum;
   const dot = document.getElementById('redDot');
-  dot.style.left = (col * cellWidth + cellWidth / 2 - 7) + 'px';
-  dot.style.top = (row * cellHeight + cellHeight / 2 - 7) + 'px';
+  dot.style.left = (col * cellW + cellW/2 - 7) + 'px';
+  dot.style.top = (row * cellH + cellH/2 - 7) + 'px';
   dot.style.display = 'block';
-
-  document.getElementById('startingPosition').value = cellNumber;
+  checkMandatory();
 }
-
 function flipField() {
-  const fieldMap = document.getElementById('fieldMap');
-  fieldMap.classList.toggle('flipped');
+  document.getElementById('fieldMap').classList.toggle('flipped');
 }
-
 function undoPosition() {
   document.getElementById('redDot').style.display = 'none';
   document.getElementById('startingPosition').value = '';
+  checkMandatory();
 }
 
 /* ============= Mandatory Fields Check ============= */
 function validateMandatoryFields() {
-  // Required fields: scouterInitials, robotNumber, startingPosition, comments
-  const scouterInitials = document.getElementById('scouterInitials').value.trim();
-  const robotNumber = document.getElementById('robotNumber').value.trim();
-  const startingPosition = document.getElementById('startingPosition').value.trim();
+  const scouter = document.getElementById('scouterInitials').value.trim();
+  const robot = document.getElementById('robotNumber').value.trim();
+  const startPos = document.getElementById('startingPosition').value.trim();
   const comments = document.getElementById('comments').value.trim();
-
-  if (!scouterInitials || !robotNumber || !startingPosition || !comments) {
-    return false;
-  }
-  return true;
+  return scouter && robot && startPos && comments;
+}
+function checkMandatory() {
+  document.getElementById('commitButton').disabled = !validateMandatoryFields();
 }
 
-/* 
-  ============= Build Short-Code String =============
-  Instead of CSV, each field is code=value; 
-  e.g. si=Bob;mn=3;rb=Red 1;...
-*/
+/* ============= Build Short-Code Data String ============= */
 function getFormDataString() {
-  // Short code map: { code: '...', id: '...' }
+  // Map each field to a short code.
+  // Order must match the layout.
   const fieldsMap = [
     { code: 'si', id: 'scouterInitials' },
     { code: 'mn', id: 'matchNumber' },
@@ -155,22 +127,24 @@ function getFormDataString() {
     { code: 'sp', id: 'startingPosition' },
     { code: 'ns', id: 'noShow' },
     { code: 'cp', id: 'cagePosition' },
-
+    
     { code: 'ma', id: 'movedAuto' },
     { code: 'tCor', id: 'timeToScoreCoral' },
     { code: 'c1a', id: 'coralL1Auto' },
     { code: 'c2a', id: 'coralL2Auto' },
     { code: 'c3a', id: 'coralL3Auto' },
+    { code: 'c4a', id: 'coralL4Auto' },  // New field for Auto
     { code: 'baa', id: 'bargeAlgaeAuto' },
     { code: 'paa', id: 'processorAlgaeAuto' },
     { code: 'daa', id: 'dislodgedAlgaeAuto' },
     { code: 'af', id: 'autoFoul' },
-
+    
     { code: 'dat', id: 'dislodgedAlgaeTele' },
     { code: 'pl', id: 'pickupLocation' },
     { code: 'c1t', id: 'coralL1Tele' },
     { code: 'c2t', id: 'coralL2Tele' },
     { code: 'c3t', id: 'coralL3Tele' },
+    { code: 'c4t', id: 'coralL4Tele' },  // New field for Teleop
     { code: 'bat', id: 'bargeAlgaeTele' },
     { code: 'pat', id: 'processorAlgaeTele' },
     { code: 'tf', id: 'teleFouls' },
@@ -178,36 +152,32 @@ function getFormDataString() {
     { code: 'tfell', id: 'tippedFell' },
     { code: 'toc', id: 'touchedOpposingCage' },
     { code: 'dep', id: 'depTele' },
-
+    
     { code: 'ep', id: 'endPosition' },
     { code: 'def', id: 'defended' },
     { code: 'trh', id: 'timeRemainingHang' },
-
+    
     { code: 'ofs', id: 'offenseSkill' },
     { code: 'dfs', id: 'defenseSkill' },
     { code: 'yc', id: 'yellowCard' },
     { code: 'cs', id: 'cardStatus' },
     { code: 'cm', id: 'comments' }
   ];
-
+  
   let result = '';
-  for (const fm of fieldsMap) {
+  fieldsMap.forEach(fm => {
     const el = document.getElementById(fm.id);
-    if (!el) {
-      // Safety fallback
-      result += `${fm.code}=;`;
-      continue;
-    }
     let val = '';
-    if (el.type === 'checkbox') {
+    if (!el) {
+      val = '';
+    } else if (el.type === 'checkbox') {
       val = el.checked ? 'true' : 'false';
     } else {
       val = el.value;
     }
     result += `${fm.code}=${val};`;
-  }
-
-  return result; // e.g. "si=Bob;mn=1;rb=Red 2;tn=111;..."
+  });
+  return result;
 }
 
 /* ============= QR Modal ============= */
@@ -215,7 +185,6 @@ function showQRModal(dataString) {
   const modal = document.getElementById('qrModal');
   const qrDataP = document.getElementById('qrData');
   const qrCodeContainer = document.getElementById('qrCode');
-
   qrCodeContainer.innerHTML = '';
   new QRCode(qrCodeContainer, {
     text: dataString,
@@ -228,7 +197,6 @@ function showQRModal(dataString) {
   qrDataP.textContent = dataString;
   modal.style.display = 'block';
 }
-
 function closeQRModal() {
   document.getElementById('qrModal').style.display = 'none';
 }
@@ -242,22 +210,18 @@ function resetForm() {
       el.value = 0;
     } else if (el.tagName.toLowerCase() === 'select') {
       el.selectedIndex = 0;
-    } else if (el.tagName.toLowerCase() === 'textarea') {
-      el.value = '';
     } else {
       el.value = '';
     }
   });
-
   document.getElementById('offenseSkill').value = 3;
   document.getElementById('defenseSkill').value = 3;
   updateOffenseSkillDisplay();
   updateDefenseSkillDisplay();
-
   resetTimer();
-
   document.getElementById('redDot').style.display = 'none';
   document.getElementById('startingPosition').value = '';
+  document.getElementById('commitButton').disabled = true;
 }
 
 /* ============= On Load ============= */
@@ -266,38 +230,29 @@ window.onload = () => {
   document.getElementById('startStopTimerBtn').addEventListener('click', startStopTimer);
   document.getElementById('lapTimerBtn').addEventListener('click', lapTimer);
   document.getElementById('resetTimerBtn').addEventListener('click', resetTimer);
-
-  // Commit
+  
+  // Field map
+  document.getElementById('fieldMap').addEventListener('click', handleFieldClick);
+  document.getElementById('flipFieldBtn').addEventListener('click', flipField);
+  document.getElementById('undoPositionBtn').addEventListener('click', undoPosition);
+  
+  // Commit button: build data string and show QR
   document.getElementById('commitButton').addEventListener('click', () => {
-    // Check mandatory fields first
     if (!validateMandatoryFields()) {
       alert('Please fill out all required fields:\n- Scouter Initials\n- Robot\n- Auto Start Position\n- Comments');
-      return; // Stop if fields are missing
+      return;
     }
-    // Build short-code string
-    const shortData = getFormDataString();
-    // Show QR
-    showQRModal(shortData);
+    const dataStr = getFormDataString();
+    showQRModal(dataStr);
   });
-
-  // Reset
+  
+  // Reset form
   document.getElementById('resetButton').addEventListener('click', resetForm);
-
-  // Copy columns
-  document.getElementById('copyColumnNamesButton').addEventListener('click', () => {
-    // We could just copy the short codes or the "columns" from old CSV logic,
-    // but let's do short codes for completeness:
-    const shortCodes = [
-      'si','mn','rb','tn','sp','ns','cp',
-      'ma','tCor','c1a','c2a','c3a','baa','paa','daa','af',
-      'dat','pl','c1t','c2t','c3t','bat','pat','tf','cf','tfell','toc','dep',
-      'ep','def','trh','ofs','dfs','yc','cs','cm'
-    ].join(',');
-    navigator.clipboard.writeText(shortCodes)
-      .then(() => alert('Short-code column names copied!'))
-      .catch(err => console.error('Failed to copy', err));
-  });
-
+  
+  // Watch mandatory fields
+  document.querySelectorAll('#scouterInitials, #robotNumber, #startingPosition, #comments')
+    .forEach(el => el.addEventListener('input', checkMandatory));
+  
   // Modal close
   document.getElementById('closeModal').addEventListener('click', closeQRModal);
   window.addEventListener('click', e => {
@@ -305,9 +260,7 @@ window.onload = () => {
       closeQRModal();
     }
   });
-
-  // Field map
-  document.getElementById('fieldMap').addEventListener('click', handleFieldClick);
-  document.getElementById('flipFieldBtn').addEventListener('click', flipField);
-  document.getElementById('undoPositionBtn').addEventListener('click', undoPosition);
+  
+  resetForm();
+  updateTimerDisplay();
 };
