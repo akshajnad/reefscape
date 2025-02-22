@@ -15,8 +15,6 @@
   <h1>REEFSCAPE</h1>
 </header>
 
-<!-- (No hidden event code input here – event code is now a JS constant) -->
-
 <div class="app">
   <!-- PREMATCH SECTION -->
   <div class="column" id="prematchColumn">
@@ -31,6 +29,15 @@
       <div class="field">
         <label for="matchNumber">Match Number</label>
         <input type="number" id="matchNumber" value="1" />
+      </div>
+      <!-- Match Type (New) -->
+      <div class="field">
+        <label for="matchType">Match Type</label>
+        <select id="matchType">
+          <option value="qm">Qual</option>
+          <option value="qf">Playoff</option>
+          <option value="f">Final</option>
+        </select>
       </div>
       <!-- Robot (Dropdown, Mandatory) -->
       <div class="field">
@@ -75,7 +82,7 @@
           <img src="field.png" alt="Game Field" />
           <div class="red-dot" id="redDot"></div>
         </div>
-        <!-- This hidden input will store the free-form coordinate as a JSON array (e.g., '["123,45"]') -->
+        <!-- This hidden input stores the free-form coordinate as a JSON array -->
         <input type="hidden" id="startingPosition" value="" />
       </div>
     </div>
