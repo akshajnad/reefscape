@@ -1,11 +1,10 @@
 /* ------------------------------------------------------
    style.css
-   Replicates the original Reefscape look with smooth outlines.
-   Uses SF Sports Night (if available) for the header.
+   Replicates the original Reefscape look with smooth outlines,
+   SF Sports Night header, and larger buttons for mobile.
 ------------------------------------------------------- */
 
-/* Optional font face for SF Sports Night – provide the .woff2 file if available */
-/*
+/* Optional: SF Sports Night font (provide SFSportsNight.woff2 in same folder)
 @font-face {
   font-family: 'SF Sports Night';
   src: url('SFSportsNight.woff2') format('woff2');
@@ -27,7 +26,7 @@ html, body {
   font-family: sans-serif;
 }
 
-/* Main Header */
+/* Main header */
 .main-header {
   background-color: #000;
   text-align: center;
@@ -51,7 +50,7 @@ html, body {
   padding: 10px;
 }
 
-/* Each Section (Column) */
+/* Section (column) styling */
 .column {
   background-color: #111;
   border: 1px solid #333;
@@ -75,7 +74,7 @@ html, body {
   gap: 8px;
 }
 
-/* Fields */
+/* Field styling */
 .field {
   background-color: #000;
   border: 1px solid #d91f26;
@@ -246,7 +245,7 @@ html, body {
   background-color: #d91f26;
 }
 
-/* Modal */
+/* Modal styling */
 .modal {
   display: none;
   position: fixed;
