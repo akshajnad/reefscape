@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>FRC Scouting App (Mobile Fullscreen)</title>
+  <!-- Ensures phone uses full width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ====== MAIN HEADER ====== -->
+<header class="main-header">
+  <h1>Reefscape</h1>
+</header>
+
+<div class="app">
+  <!-- ================== PREMATCH COLUMN ================== -->
+  <div class="column" id="prematchColumn">
+    <div class="column-header">PREMATCH</div>
+    <div class="column-body">
+      <!-- Scouter Initials (Mandatory) -->
+      <div class="field">
+        <label for="scouterInitials">Scouter Initials *</label>
+        <input type="text" id="scouterInitials" />
+      </div>
+      <!-- Match Number -->
+      <div class="field">
+        <label for="matchNumber">Match Number</label>
+        <input type="number" id="matchNumber" value="0" />
+      </div>
+      <!-- Robot (Dropdown, Mandatory) -->
+      <div class="field">
+        <label for="robotNumber">Robot *</label>
+        <select id="robotNumber">
+          <option value="">--Select--</option>
+          <option value="Red 1">Red 1</option>
+          <option value="Red 2">Red 2</option>
+          <option value="Red 3">Red 3</option>
+          <option value="Blue 1">Blue 1</option>
+          <option value="Blue 2">Blue 2</option>
+          <option value="Blue 3">Blue 3</option>
+        </select>
+      </div>
+      <!-- Team Number -->
+      <div class="field">
+        <label for="teamNumber">Team Number</label>
+        <input type="number" id="teamNumber" value="0" />
+      </div>
+      <!-- No Show? -->
+      <div class="checkbox-field">
+        <label for="noShow">No Show?</label>
+        <input type="checkbox" id="noShow" />
+      </div>
+      <!-- Cage Position (Dropdown) -->
+      <div class="field">
+        <label for="cagePosition">Cage Position</label>
+        <select id="cagePosition">
+          <option value="Shallow">Shallow</option>
+          <option value="Deep">Deep</option>
+        </select>
+      </div>
+
+      <!-- === Auto Start Position (Image Grid, Mandatory) === -->
+      <div class="field field-image">
+        <label>Auto Start Position *</label>
+        <div class="map-buttons">
+          <button type="button" id="undoPositionBtn">Undo</button>
+          <button type="button" id="flipFieldBtn">Flip</button>
+        </div>
+        <div class="field-map" id="fieldMap">
+          <!-- Replace "field.png" with your actual field image -->
+          <img src="field.png" alt="Game Field" />
+          <div class="red-dot" id="redDot"></div>
+        </div>
+        <!-- Hidden input to store the cell number for CSV -->
+        <input type="hidden" id="startingPosition" value="" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ================== AUTONOMOUS COLUMN ================== -->
+  <div class="column" id="autonomousColumn">
+    <div class="column-header">AUTONOMOUS</div>
+    <div class="column-body">
+      <!-- Moved? -->
+      <div class="checkbox-field">
+        <label for="movedAuto">Moved?</label>
+        <input type="checkbox" id="movedAuto" />
+      </div>
+      <!-- Time to Score Coral (Timer) -->
+      <div class="timer-field">
+        <label>Time to Score Coral</label>
+        <div class="timer-display" id="timeToScoreCoralDisplay">00:00.0</div>
+        <div class="timer-buttons">
+          <button class="timer-btn" id="startStopTimerBtn">Start</button>
+          <button class="timer-btn" id="lapTimerBtn">Lap</button>
+          <button class="timer-btn" id="resetTimerBtn">Reset</button>
+        </div>
+        <!-- Hidden input to store final time for CSV -->
+        <input type="hidden" id="timeToScoreCoral" value="0.00" />
+      </div>
+      <!-- Coral L1 Scored -->
+      <div class="field">
+        <label>Coral L1 Scored</label>
+        <div class="counter-container">
+          <button class="counter-btn" onclick="decrement('coralL1Auto')">-</button>
+          <input type="number" id="coralL1Auto" value="0" />
+          <button class="counter-btn" onclick="increment('coralL1Auto')">+</button>
+        </div>
+      </div>
+      <!-- Coral L2 Scored -->
+      <div class="field">
+        <label>Coral L2 Scored</label>
+        <div class="counter-container">
+          <button class="counter-btn" onclick="decrement('coralL2Auto')">-</button>
+          <input type="number" id="coralL2Auto" value="0" />
+          <button class="counter-btn" onclick="increment('coralL2Auto')">+</button>
+        </div>
+      </div>
+      <!-- Coral L3 Scored -->
+      <div class="field">
+        <label>Coral L3 Scored</label>
+        <div class="counter-container">
+          <button class="counter-btn" onclick="decrement('coralL3Auto')">-</button>
+          <input type="number" id="coralL3Auto" value="0" />
+          <button class="counter-btn" onclick="increment('coralL3Auto')">+</button>
+        </div>
+      </div>
+      <!-- Barge Algae Scored -->
+      <div class="field">
+        <label>Barge Algae Scored</label>
+        <div class="counter-container">
+          <button class="counter-btn" onclick="decrement('bargeAlgaeAuto')">-</button>
+          <input type="number" id="bargeAlgaeAuto" value="0" />
+          <button class="counter-btn" onclick="increment('bargeAlgaeAuto')">+</button>
+        </div>
+      </div>
+      <!-- Processor Algae Scored -->
+      <div class="field">
+        <label>Processor Algae Scored</label>
+        <div class="counter-container">
+          <button class="counter-btn" onclick="decrement('processorAlgaeAuto')">-</button>
+          <input type="number" id="processorAlgaeAuto" value="0" />
+          <button class="counter-btn" onclick="increment('processorAlgaeAuto')">+</button>
+        </div>
+      </div>
+      <!-- Dislodged Algae? -->
+      <div class="checkbox-field">
+        <label for="dislodgedAlgaeAuto">Dislodged Algae?</label>
+        <input type="checkbox" id="dislodgedAlgaeAuto" />
+      </div>
+      <!-- Auto Foul -->
+      <div class="field">
+        <label>Auto Foul</label>
+        <div class="counter-container">
+          <button class="counter-btn" onclick="decrement('autoFoul')">-</button>
+          <input type="number" id="autoFoul" value="0" />
+          <button class="counter-btn" onclick="increment('autoFoul')">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================== TELEOP COLUMN ================== -->
+  <div class="column" id="teleopColumn">
+    <div class="column-header">TELEOP</div>
+    <div class="column-body">
+      <!-- Dislodged Algae? -->
+      <div class="checkbox-field">
+        <label for="dislodgedAlgaeTele">Dislodged Algae?</label>
+        <input type="checkbox" id="dislodgedAlgaeTele" />
+      </div>
+      <!-- Pickup Location (Dropdown) -->
+      <div class="field">
+        <label for="pickupLocation">Pickup Location</label>
+        <select id="pickupLocation">
+          <option value="None">None</option>
+          <option value="Ground">Ground</option>
+          <option value="Human Player">Human Player</option>
+          <option value="Both">Both</option>
+        </select>
+      </div>
+      <!-- Coral L1 Scored -->
+      <div class="field">
+        <label>Coral L1 Scored</label>
+        <div class="counter-container">
+          <button class="counter-btn" onclick="decrement('coralL1Tele')">-</button>
+          <input type="number" id="coralL1Tele" value="0" />
+          <button class="counter-btn" onclick="increment('coralL1Tele')">+</button>
+        </div>
+      </div>
+      <!-- Coral L2 Scored -->
+      <div class="field">
+        <label>Coral L2 Scored</label>
+        <div class="counter-container">
+          <button class="counter-btn" onclick="decrement('coralL2Tele')">-</button>
+          <input type="number" id="coralL2Tele" value="0" />
+          <button class="counter-btn" onclick="increment('coralL2Tele')">+</button>
+        </div>
+      </div>
+      <!-- Coral L3 Scored -->
+      <div class="field">
+        <label>Coral L3 Scored</label>
+        <div class="counter-container">
+          <button class="counter-btn" onclick="decrement('coralL3Tele')">-</button>
+          <input type="number" id="coralL3Tele" value="0" />
+          <button class="counter-btn" onclick="increment('coralL3Tele')">+</button>
+        </div>
+      </div>
+      <!-- Barge Algae Scored -->
+      <div class="field">
+        <label>Barge Algae Scored</label>
+        <div class="counter-container">
+          <button class="counter-btn" onclick="decrement('bargeAlgaeTele')">-</button>
+          <input type="number" id="bargeAlgaeTele" value="0" />
+          <button class="counter-btn" onclick="increment('bargeAlgaeTele')">+</button>
+        </div>
+      </div>
+      <!-- Processor Algae Scored -->
+      <div class="field">
+        <label>Processor Algae Scored</label>
+        <div class="counter-container">
+          <button class="counter-btn" onclick="decrement('processorAlgaeTele')">-</button>
+          <input type="number" id="processorAlgaeTele" value="0" />
+          <button class="counter-btn" onclick="increment('processorAlgaeTele')">+</button>
+        </div>
+      </div>
+      <!-- Tele Fouls -->
+      <div class="field">
+        <label>Tele Fouls</label>
+        <div class="counter-container">
+          <button class="counter-btn" onclick="decrement('teleFouls')">-</button>
+          <input type="number" id="teleFouls" value="0" />
+          <button class="counter-btn" onclick="increment('teleFouls')">+</button>
+        </div>
+      </div>
+      <!-- Crossed Field? -->
+      <div class="checkbox-field">
+        <label for="crossedField">Crossed Field?</label>
+        <input type="checkbox" id="crossedField" />
+      </div>
+      <!-- Tipped/Fell Over? -->
+      <div class="checkbox-field">
+        <label for="tippedFell">Tipped/Fell Over?</label>
+        <input type="checkbox" id="tippedFell" />
+      </div>
+      <!-- Touched Opposing Cage? -->
+      <div class="checkbox-field">
+        <label for="touchedOpposingCage">Touched Opposing Cage?</label>
+        <input type="checkbox" id="touchedOpposingCage" />
+      </div>
+      <!-- DEP? -->
+      <div class="checkbox-field">
+        <label for="depTele">DEP?</label>
+        <input type="checkbox" id="depTele" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ================== ENDGAME COLUMN ================== -->
+  <div class="column" id="endgameColumn">
+    <div class="column-header">ENDGAME</div>
+    <div class="column-body">
+      <!-- End Position (Dropdown) -->
+      <div class="field">
+        <label for="endPosition">End Position</label>
+        <select id="endPosition">
+          <option value="Not Parked">Not Parked</option>
+          <option value="Parked">Parked</option>
+          <option value="Shallow Climb">Shallow Climb</option>
+          <option value="Deep Climb">Deep Climb</option>
+          <option value="Failed Climb">Failed Climb</option>
+        </select>
+      </div>
+      <!-- Defended? -->
+      <div class="checkbox-field">
+        <label for="defended">Defended?</label>
+        <input type="checkbox" id="defended" />
+      </div>
+      <!-- Time Remaining After Hang -->
+      <div class="field">
+        <label for="timeRemainingHang">Time Remaining After Hang</label>
+        <input type="number" id="timeRemainingHang" value="0" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ================== POSTMATCH COLUMN ================== -->
+  <div class="column" id="postmatchColumn">
+    <div class="column-header">POSTMATCH</div>
+    <div class="column-body">
+      <!-- Offensive Skill (slider) -->
+      <div class="field slider-field">
+        <label>Offense Skill</label>
+        <input type="range" id="offenseSkill" min="1" max="5" value="3" oninput="updateOffenseSkillDisplay()" />
+        <span id="offenseSkillValue">3</span>
+      </div>
+      <!-- Defensive Skill (slider) -->
+      <div class="field slider-field">
+        <label>Defensive Skill</label>
+        <input type="range" id="defenseSkill" min="1" max="5" value="3" oninput="updateDefenseSkillDisplay()" />
+        <span id="defenseSkillValue">3</span>
+      </div>
+      <!-- Yellow Card -->
+      <div class="checkbox-field">
+        <label for="yellowCard">Yellow Card</label>
+        <input type="checkbox" id="yellowCard" />
+      </div>
+      <!-- Card (No Card / Red Card) -->
+      <div class="field">
+        <label for="cardStatus">Card</label>
+        <select id="cardStatus">
+          <option value="No Card">No Card</option>
+          <option value="Red Card">Red Card</option>
+        </select>
+      </div>
+      <!-- Comments Box (Mandatory) -->
+      <div class="field textarea-field">
+        <label for="comments">Comments *</label>
+        <textarea id="comments"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================== BOTTOM BUTTONS ================== -->
+<div class="bottom-buttons">
+  <button class="btn commit-btn" id="commitButton">Commit</button>
+  <button class="btn" id="resetButton">Reset Form</button>
+  <button class="btn" id="copyColumnNamesButton">Copy Column Names</button>
+</div>
+
+<!-- ================== MODAL FOR QR CODE ================== -->
+<div id="qrModal" class="modal">
+  <div class="modal-content">
+    <span id="closeModal" class="close">&times;</span>
+    <div id="qrCode"></div>
+    <p id="qrData"></p>
+  </div>
+</div>
+
+<!-- 1) Load the official minified QR code library (qrcode.min.js) -->
+<script src="qrcode.min.js"></script>
+
+<!-- 2) Then load your main script -->
+<script src="script.js"></script>
+
+</body>
+</html>
