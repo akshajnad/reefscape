@@ -1,16 +1,19 @@
 /* ------------------------------------------------------
-   Integrated script.js
-   - Combines our prior code with full functionality from ScoutingPASS.js and TBAInterface.
-   - Auto start position: free selection on field image.
-   - Auto-fills team number from The Blue Alliance.
-   - Resets form by incrementing match number automatically.
-   - Builds output data as short-code key=value; string.
+   script.js
+   Integrated functionality:
+   - Uses a constant for event code (set here)
+   - Pulls team and match data from TBA using the provided API key
+   - Free–form interactive field: on click, store actual (x,y) coordinates (not grid–constrained)
+   - Auto–fill team number based on robot selection (using real TBA data)
+   - Reset form automatically increments match number
+   - Builds output data as short–code key=value; string (including Coral L4 fields)
 ------------------------------------------------------ */
 
-/* === TBA Interface Functions === */
+/* ===== TBA Interface Functions ===== */
 var teams = null;
 var schedule = null;
 var authKey = "2XACou7MLBnRarV4LPD69OOTMzSccjEfedI2diYMvzuxbD6d2E9U9PEiPppOPjsE";
+const EVENT_CODE = "CTWAT";
 
 function getTeams(eventCode) {
   if (authKey) {
@@ -42,7 +45,7 @@ function getSchedule(eventCode) {
   }
 }
 
-/* === Timer Functions === */
+/* ===== Timer Functions ===== */
 let timerInterval = null;
 let elapsedTime = 0;
 let isRunning = false;
@@ -52,8 +55,7 @@ function formatTime(ms) {
   const seconds = totalSeconds % 60;
   const fraction = Math.floor((ms % 1000) / 100);
   return String(minutes).padStart(2, '0') + ':' +
-         String(seconds).padStart(2, '0') + '.' +
-         fraction;
+         String(seconds).padStart(2, '0') + '.' + fraction;
 }
 function updateTimerDisplay() {
   document.getElementById('timeToScoreCoralDisplay').textContent = formatTime(elapsedTime);
@@ -89,7 +91,7 @@ function resetTimer() {
   document.getElementById('timeToScoreCoral').value = '0.00';
 }
 
-/* === Increment/Decrement for Counters === */
+/* ===== Increment/Decrement for Counters ===== */
 function increment(id) {
   const el = document.getElementById(id);
   let val = parseInt(el.value, 10);
@@ -103,7 +105,7 @@ function decrement(id) {
   if (val > 0) el.value = val - 1;
 }
 
-/* === Slider Updates === */
+/* ===== Slider Updates ===== */
 function updateOffenseSkillDisplay() {
   document.getElementById('offenseSkillValue').textContent = document.getElementById('offenseSkill').value;
 }
@@ -111,54 +113,45 @@ function updateDefenseSkillDisplay() {
   document.getElementById('defenseSkillValue').textContent = document.getElementById('defenseSkill').value;
 }
 
-/* === Interactive Field (Auto Start Position) === */
-/* Free selection: user can click anywhere on the field image */
+/* ===== Interactive Field (Free Selection) ===== */
+/* When the user clicks on the field image, store the actual (x,y) coordinate */
 function onFieldClick(event) {
   const map = document.getElementById('fieldMap');
   const rect = map.getBoundingClientRect();
+  // Use event.offsetX/Y to get click position relative to the image
   const x = event.offsetX;
   const y = event.offsetY;
-  // Use default resolution of 12 columns × 6 rows to compute a cell number.
-  const resX = 12, resY = 6;
-  const cell = Math.ceil(x / (rect.width / resX)) +
-               ((Math.ceil(y / (rect.height / resY)) - 1) * resX);
-  document.getElementById('startingPosition').value = cell;
-  let center = findMiddleOfBox(cell, rect.width, rect.height, resX, resY);
-  let coords = center.split(",");
+  // Store as a JSON array of one element "x,y"
+  const coordsArray = [x + "," + y];
+  document.getElementById('startingPosition').value = JSON.stringify(coordsArray);
+  // Position the red dot at the clicked coordinates
   const dot = document.getElementById('redDot');
-  dot.style.left = (parseFloat(coords[0]) - 7) + "px";
-  dot.style.top = (parseFloat(coords[1]) - 7) + "px";
+  dot.style.left = (x - 7) + "px";
+  dot.style.top = (y - 7) + "px";
   dot.style.display = "block";
   checkMandatory();
 }
-function findMiddleOfBox(boxNum, width, height, resX, resY) {
-  let boxWidth = width / resX;
-  let boxHeight = height / resY;
-  let col = (boxNum - 1) % resX;
-  let row = Math.floor((boxNum - 1) / resX);
-  let centerX = col * boxWidth + boxWidth / 2;
-  let centerY = row * boxHeight + boxHeight / 2;
-  return centerX + "," + centerY;
+
+/* ===== Mandatory Fields Check ===== */
+function validateMandatoryFields() {
+  const scouter = document.getElementById('scouterInitials').value.trim();
+  const robot = document.getElementById('robotNumber').value.trim();
+  const startPos = document.getElementById('startingPosition').value.trim();
+  const comments = document.getElementById('comments').value.trim();
+  return scouter && robot && startPos && comments;
 }
-function undoPosition() {
-  document.getElementById('redDot').style.display = 'none';
-  document.getElementById('startingPosition').value = '';
-  checkMandatory();
+function checkMandatory() {
+  document.getElementById('commitButton').disabled = !validateMandatoryFields();
 }
 
-/* === Auto-Fill Team Number from Blue Alliance === */
-/* Convert robot value ("Red 1" or "Blue 2") into "r1"/"b2" format */
+/* ===== Auto-Fill Team Number Based on Robot & TBA Data ===== */
 function getRobot() {
   let r = document.getElementById("robotNumber").value;
   if (!r) return "";
-  r = r.toLowerCase().replace("red ", "r").replace("blue ", "b");
-  return r;
+  return r.toLowerCase().replace("red ", "r").replace("blue ", "b");
 }
 function getCurrentMatchKey() {
-  // Use event code from hidden input "eventCode" and match number from "matchNumber"
-  const eventCode = document.getElementById("eventCode").value;
-  const match = document.getElementById("matchNumber").value;
-  return eventCode + "_" + match;
+  return EVENT_CODE + "_" + document.getElementById("matchNumber").value;
 }
 function getMatch(matchKey) {
   if (schedule) {
@@ -196,19 +189,7 @@ function autoFillTeamNumber() {
   }
 }
 
-/* === Mandatory Fields Check === */
-function validateMandatoryFields() {
-  const scouter = document.getElementById('scouterInitials').value.trim();
-  const robot = document.getElementById('robotNumber').value.trim();
-  const startPos = document.getElementById('startingPosition').value.trim();
-  const comments = document.getElementById('comments').value.trim();
-  return scouter && robot && startPos && comments;
-}
-function checkMandatory() {
-  document.getElementById('commitButton').disabled = !validateMandatoryFields();
-}
-
-/* === Build Short-Code Data String === */
+/* ===== Build Short-Code Data String ===== */
 function getFormDataString() {
   const fieldsMap = [
     { code: 'si', id: 'scouterInitials' },
@@ -271,7 +252,7 @@ function getFormDataString() {
   return result;
 }
 
-/* === QR Modal Functions === */
+/* ===== QR Modal Functions ===== */
 function showQRModal(dataString) {
   const modal = document.getElementById('qrModal');
   const qrDataP = document.getElementById('qrData');
@@ -292,15 +273,18 @@ function closeQRModal() {
   document.getElementById('qrModal').style.display = 'none';
 }
 
-/* === Reset Form (Auto-Increment Match Number) === */
+/* ===== Reset Form (Auto-Increment Match Number) ===== */
 function resetForm() {
+  // Increment match number automatically
   const matchInput = document.getElementById("matchNumber");
   let currentMatch = parseInt(matchInput.value, 10);
   if (!isNaN(currentMatch)) {
     matchInput.value = currentMatch + 1;
   }
+  // Reset all other fields (except event code)
   document.querySelectorAll('input, select, textarea').forEach(el => {
-    if (el.id === "matchNumber" || el.id === "eventCode") return;
+    if (el.id === "matchNumber") return;
+    if (el.id === "eventCode") return;
     if (el.type === 'checkbox') {
       el.checked = false;
     } else if (el.type === 'number') {
@@ -316,7 +300,7 @@ function resetForm() {
   document.getElementById('commitButton').disabled = true;
 }
 
-/* === Copy Column Names (Short Codes) === */
+/* ===== Copy Column Names (Short Codes) ===== */
 function copyColumnNames() {
   const columns = [
     'si','mn','rb','tn','sp','ns','cp',
@@ -329,26 +313,25 @@ function copyColumnNames() {
     .catch(err => console.error('Failed to copy column names', err));
 }
 
-/* === Window Onload: Initialize Everything === */
+/* ===== Window Onload: Initialize Everything ===== */
 window.onload = () => {
-  // Get event code from hidden input and fetch teams/schedule from TBA
-  const eventCode = document.getElementById("eventCode").value;
-  getTeams(eventCode);
-  getSchedule(eventCode);
+  // Pull teams and schedule from TBA using our EVENT_CODE
+  getTeams(EVENT_CODE);
+  getSchedule(EVENT_CODE);
   
   // Timer events
   document.getElementById('startStopTimerBtn').addEventListener('click', startStopTimer);
   document.getElementById('lapTimerBtn').addEventListener('click', lapTimer);
   document.getElementById('resetTimerBtn').addEventListener('click', resetTimer);
   
-  // Field map events
+  // Field map: use free selection (our onFieldClick now stores actual (x,y))
   document.getElementById('fieldMap').addEventListener('click', onFieldClick);
   document.getElementById('flipFieldBtn').addEventListener('click', () => {
     document.getElementById('fieldMap').classList.toggle('flipped');
   });
   document.getElementById('undoPositionBtn').addEventListener('click', undoPosition);
   
-  // When robot selection changes, auto-fill team number using TBA data
+  // When robot selection changes, auto-fill team number
   document.getElementById('robotNumber').addEventListener('change', () => {
     autoFillTeamNumber();
     checkMandatory();
@@ -358,7 +341,7 @@ window.onload = () => {
   document.querySelectorAll('#scouterInitials, #robotNumber, #startingPosition, #comments')
     .forEach(el => el.addEventListener('input', checkMandatory));
   
-  // Commit button: validate mandatory fields, build data string, and show QR code
+  // Commit button: validate mandatory fields, build data string, and show QR
   document.getElementById('commitButton').addEventListener('click', () => {
     if (!validateMandatoryFields()) {
       alert('Please fill out all required fields:\n- Scouter Initials\n- Robot\n- Auto Start Position\n- Comments');
